@@ -156,4 +156,41 @@ private:
     std::vector<std::vector<float>> mMatrix;
 };
 
-#endif //MYRENDERER_GEOMETRY_H
+inline Vec2f mat2vec(Matrix m) {
+    return Vec2f{ m[0][0]/m[2][0], m[1][0]/m[2][0] };
+}
+
+inline Matrix vec2mat(const Vec2f& v) {
+    Matrix res{ 3, 1 };
+    res[0][0] = v.x;
+    res[1][0] = v.y;
+    res[2][0] = 1.0f;
+    return res;
+}
+
+inline Matrix translation(const Vec2f& v) {
+    auto res = Matrix::eye(3);
+    res[0][2] = v.x;
+    res[1][2] = v.y;
+    return res; 
+}
+
+inline Matrix rotateAround(const Vec2f& p, float angle) {
+    auto rot = Matrix::eye(3);
+    rot[0][0] = cosf(angle);
+    rot[0][1] = -sinf(angle);
+    rot[1][0] = sinf(angle);
+    rot[1][1] = cosf(angle);
+
+    auto translation0 = Matrix::eye(3);
+    translation0[0][2] = -p.x;
+    translation0[1][2] = -p.y;
+
+    auto translation1 = Matrix::eye(3);
+    translation1[0][2] = p.x;
+    translation1[1][2] = p.y;
+
+    return translation1 * rot * translation0; 
+}
+
+#endif 

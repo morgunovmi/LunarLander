@@ -8,7 +8,8 @@
 #include "engine/Engine.h"
 #include "math/math.h"
 #include "renderer/Renderer.h"
-#include "entities/Object.h"
+#include "entities/Player.h"
+#include "entities/Ground.h"
 
 //
 //  You are free to modify this file
@@ -30,27 +31,19 @@ void handleInput() {
 std::shared_ptr<Renderer> renderer{nullptr};
 std::vector<std::shared_ptr<Object>> world{};
 
-const std::vector<Vec2i> quadVerts {
-    Vec2i{SCREEN_WIDTH - 10, 100},
-    Vec2i{SCREEN_WIDTH - 10, 200},
-    Vec2i{SCREEN_WIDTH - 50, 150},
+std::vector<Vec2i> groundVerts {
+    Vec2i{500, 0 },
+    Vec2i{400, 100},
+    Vec2i{500, 200},
+    Vec2i{400, 300},
+    Vec2i{400, 600},
+    Vec2i{500, 700},
+    Vec2i{400, 800},
+    Vec2i{400, SCREEN_WIDTH},
 };
 
-const std::vector<u8> quadIndices {
-    0, 1, 2
-};
-
-const std::vector<Vec2i> groundVerts {
-    Vec2i{400, 400},
-    Vec2i{400, SCREEN_WIDTH - 10},
-};
-
-const std::vector<u8> groundIndices {
-    0, 1
-};
-
-const std::vector<Vec2i> starVerts {
-    {SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10}
+std::vector<u8> groundIndices {
+    0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7
 };
 
 // initialize game data in this function
@@ -59,38 +52,25 @@ void initialize()
     std::cout << "Starting game with resolution: (" << SCREEN_WIDTH << " x " << SCREEN_HEIGHT << ")\n";
 
     world.push_back(
-            std::make_shared<Object>(
-                quadVerts,
-                quadIndices,
-                Red,
-                TRIANGLES,
-                Vec2f{0, 0},
-                Vec2f{0, 0},
-                12
+            std::make_shared<Player>(
+                Vec2f{500, 500}, // Pos
+                Vec2f{0, 0}, // Vel 
+                Vec2f{0, 0}, // Acc
+                100,         // width 
+                200,         // height
+                -1,          // Rot
+                0,          // AngVel
+                0,          // AngAcc
+                White,
+                TRIANGLES
             )
         );
 
     world.push_back(
-            std::make_shared<Object>(
+            std::make_shared<Ground>(
                 groundVerts,
                 groundIndices,
-                White,
-                LINES,
-                Vec2f{0, 0},
-                Vec2f{0, 0},
-                12
-            )
-        );
-
-    world.push_back(
-            std::make_shared<Object>(
-                starVerts,
-                groundIndices,
-                Green,
-                POINTS,
-                Vec2f{0, 0},
-                Vec2f{0, 0},
-                12
+                White
             )
         );
 

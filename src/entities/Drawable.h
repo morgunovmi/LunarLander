@@ -6,12 +6,13 @@
 
 class Drawable {
 public:
-    Drawable(const std::vector<Vec2i>& verts, const std::vector<u8>& indices, Color color, DrawMode mode)
-       : m_verts(verts), m_indices(indices), m_color(color), m_mode(mode) {} 
+    Drawable(Color color, DrawMode mode)
+       : m_color(color), m_mode(mode) {} 
 
+    virtual void draw() {}
 
-    const std::vector<Vec2i>& m_verts;
-    const std::vector<u8>& m_indices;
+    virtual ~Drawable() = default;
+
     Color m_color;
     DrawMode m_mode;
 };

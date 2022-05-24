@@ -4,12 +4,10 @@
 
 class Object : public Drawable {
 public:
-    Object(const std::vector<Vec2i>& verts, const std::vector<u8>& indices, Color color, DrawMode mode,
-           Vec2f pos, Vec2f vel, float rot)
-           : Drawable(verts, indices, color, mode),
-            m_position(pos), m_velocity(vel), m_rotation(rot) {}
+    Object(Color color, DrawMode mode) 
+        : Drawable(color, mode) {}
 
-    Vec2f m_position;
-    Vec2f m_velocity;
-    float m_rotation;
+    virtual void update(float dt) {}
+
+    virtual ~Object() = default;
 };

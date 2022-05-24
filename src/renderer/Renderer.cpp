@@ -34,9 +34,15 @@ void Renderer::line(Vec2i p0, Vec2i p1, Color color) {
 
     for (int x = x0; x < x1; ++x) {
         if (steep) {
-            buffer[y][x] = color.c32;
+            if (y >= 0 && y < SCREEN_HEIGHT
+                && x >= 0 && x < SCREEN_WIDTH) {
+                buffer[y][x] = color.c32;
+            }
         } else {
-            buffer[x][y] = color.c32;
+            if (x >= 0 && x < SCREEN_HEIGHT
+                && y >= 0 && y < SCREEN_WIDTH) {
+                buffer[x][y] = color.c32;
+            }
         }
         error2 += derror2;
         if (error2 > dx) {
@@ -58,7 +64,10 @@ void Renderer::triangle(std::array<Vec2i, 3>& v, Color color) {
         auto b = secondHalf ? v[1] + (v[2] - v[1]) * beta : v[0] + (v[1] - v[0]) * beta;
         if (a.x > b.x) std::swap(a, b);
         for (int j = a.x; j < b.x; j++) {
-            buffer[v[0].y + i][j] = color.c32;
+            if (v[0].y + i >= 0 && v[0].y + i < SCREEN_HEIGHT
+                && j >= 0 && j < SCREEN_WIDTH) {
+                buffer[v[0].y + i][j] = color.c32;
+            }
         }
     }
 }
@@ -90,7 +99,10 @@ void Renderer::drawVerts(const std::vector<Vec2i> &verts, const std::vector<u8> 
         break;
         case POINTS:
             for (const auto & vert : verts) {
-                buffer[vert.y][vert.x] = color.c32;
+                if (vert.y >= 0 && vert.y < SCREEN_HEIGHT
+                    && vert.x >= 0 && vert.x < SCREEN_WIDTH) {
+                    buffer[vert.y][vert.x] = color.c32;
+                }
             }
         break;
         default:
@@ -103,7 +115,7 @@ void Renderer::draw() {
     fill(Black);
 
     for (const auto & obj : m_world) {
-        drawVerts(obj->m_verts, obj->m_indices, obj->m_color, obj->m_mode);
+        obj->draw();
     }
 
     line(Vec2i{100, 100}, Vec2i{200, 200}, Color{{0, 255, 0, 100}});
