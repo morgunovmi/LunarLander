@@ -47,7 +47,6 @@ private:
 
     const float maxAcc = 10.f;
     const float maxAngAcc = 0.5f;
-    const float maxVel = 10.f;
 
     const float mainEnginePower = 2.f;
     const float maneuverEnginePower = 0.01f;

@@ -10,6 +10,7 @@
 #include "renderer/Renderer.h"
 #include "entities/Player.h"
 #include "entities/Ground.h"
+#include "entities/Circle.h"
 
 //
 //  You are free to modify this file
@@ -69,6 +70,15 @@ void initialize()
                 groundVerts,
                 groundIndices,
                 White
+            )
+        );
+
+    world.push_back(
+            std::make_shared<Circle>(
+                Vec2f{500, 350},
+                100.f,
+                Green,
+                100 
             )
         );
 
