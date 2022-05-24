@@ -29,8 +29,6 @@ void handleInput() {
     }
 }
 
-std::shared_ptr<Renderer> renderer{nullptr};
-std::vector<std::shared_ptr<Object>> world{};
 
 std::vector<Vec2i> groundVerts {
     Vec2i{500, 0 },
@@ -47,6 +45,11 @@ std::vector<u8> groundIndices {
     0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7
 };
 
+std::shared_ptr<Renderer> renderer{nullptr};
+std::vector<std::shared_ptr<Object>> world{};
+std::shared_ptr<Player> player{nullptr};
+std::shared_ptr<Ground> ground{nullptr};
+
 // initialize game data in this function
 void initialize()
 {
@@ -62,6 +65,16 @@ void initialize()
         );
 
     world.push_back(
+            std::make_shared<Circle>(
+                Vec2f{150, 150},
+                100.f,
+                Blue,
+                75, 
+                false
+            )
+        );
+
+    world.push_back(
             std::make_shared<Ground>(
                 groundVerts,
                 groundIndices,
@@ -73,8 +86,8 @@ void initialize()
             std::make_shared<Player>(
                 Vec2f{500, 500}, // Pos
                 Vec2f{0, 0}, // Vel 
-                100,         // width 
-                200,         // height
+                40,         // width 
+                80,         // height
                 0,          // Rot
                 0,          // AngVel
                 White,

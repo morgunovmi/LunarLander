@@ -4,7 +4,7 @@
 class Planet : public Circle {
 public:
     Planet(Vec2f pos, float radius, Color color, u16 numPoints)
-        : Circle(pos, radius, color, numPoints) {}
+        : Circle(pos, radius, color, numPoints, true) {}
 
     virtual void update(float dt) override {
         m_position.x -= 0.8f * dt;
