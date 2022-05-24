@@ -57,7 +57,7 @@ void initialize()
                 Vec2f{0, 0}, // Vel 
                 100,         // width 
                 200,         // height
-                -1,          // Rot
+                0,          // Rot
                 0,          // AngVel
                 White,
                 TRIANGLES

@@ -12,16 +12,18 @@ public:
         m_vel(vel), m_angVel(angVel) {}
 
     virtual void update(float dt) override {
-        Vec2f acc{};
+        float acc = 0.f;
         if (is_key_pressed(VK_UP)) {
-            acc.y -= mainEnginePower;
+            acc -= mainEnginePower;
         }
 
-        if (acc.norm() > maxAcc) {
-            acc = acc * (maxAcc / acc.norm());
-        }
+        std::clamp(acc, -maxAcc, maxAcc);
 
-        m_vel = m_vel + acc;
+        Vec2f accVec{0.0, 1.f};
+        accVec = mat2vec(rotateAround({0.f, 0.f}, m_rotation) * vec2mat(accVec));
+        accVec = accVec * acc;
+
+        m_vel = m_vel + accVec;
         m_vel = m_vel + grav;
         m_position = m_position + m_vel * dt;
 
