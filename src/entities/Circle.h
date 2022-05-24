@@ -36,7 +36,6 @@ public:
         Renderer::drawVerts(verts, indices, m_color, m_mode);
     }
 
-private:
     Vec2f m_position;
     float m_radius;
     u16 m_points;

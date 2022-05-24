@@ -10,7 +10,7 @@
 #include "renderer/Renderer.h"
 #include "entities/Player.h"
 #include "entities/Ground.h"
-#include "entities/Circle.h"
+#include "entities/Planet.h"
 
 //
 //  You are free to modify this file
@@ -51,17 +51,13 @@ std::vector<u8> groundIndices {
 void initialize()
 {
     std::cout << "Starting game with resolution: (" << SCREEN_WIDTH << " x " << SCREEN_HEIGHT << ")\n";
-
+    
     world.push_back(
-            std::make_shared<Player>(
-                Vec2f{500, 500}, // Pos
-                Vec2f{0, 0}, // Vel 
-                100,         // width 
-                200,         // height
-                0,          // Rot
-                0,          // AngVel
-                White,
-                TRIANGLES
+            std::make_shared<Planet>(
+                Vec2f{SCREEN_WIDTH - 150, 150},
+                100.f,
+                Blue,
+                75 
             )
         );
 
@@ -74,11 +70,15 @@ void initialize()
         );
 
     world.push_back(
-            std::make_shared<Circle>(
-                Vec2f{500, 350},
-                100.f,
-                Green,
-                100 
+            std::make_shared<Player>(
+                Vec2f{500, 500}, // Pos
+                Vec2f{0, 0}, // Vel 
+                100,         // width 
+                200,         // height
+                0,          // Rot
+                0,          // AngVel
+                White,
+                TRIANGLES 
             )
         );
 
