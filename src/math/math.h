@@ -45,6 +45,8 @@ struct Vec2 {
         s << "(" << v.x << ", " << v.y << ")\n";
         return s;
     }
+
+    [[nodiscard]] float norm() const { return std::sqrt(x * x + y * y); }
 };
 
 template<typename T>

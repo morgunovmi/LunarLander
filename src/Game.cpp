@@ -55,12 +55,10 @@ void initialize()
             std::make_shared<Player>(
                 Vec2f{500, 500}, // Pos
                 Vec2f{0, 0}, // Vel 
-                Vec2f{0, 0}, // Acc
                 100,         // width 
                 200,         // height
                 -1,          // Rot
                 0,          // AngVel
-                0,          // AngAcc
                 White,
                 TRIANGLES
             )
@@ -82,6 +80,9 @@ void initialize()
 void act(float dt)
 {
     handleInput();
+    for (auto & obj : world) {
+        obj->update(dt);
+    }
 }
 
 // fill buffer in this function

@@ -27,12 +27,12 @@ public:
         Renderer::drawVerts(transformed, m_indices, m_color, m_mode);
     }
 
-private:
     Vec2f m_position;
     u16 m_width;
     u16 m_height;
     float m_rotation;
     Vec2f m_Anchor;
+private:
 
     std::vector<Vec2f> m_verts {
         {0, 0},
