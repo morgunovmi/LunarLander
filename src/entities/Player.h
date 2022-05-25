@@ -50,7 +50,7 @@ public:
         accVec = mat2vec(rotateAround({0.f, 0.f}, m_rotation) * vec2mat(accVec));
 
         const auto playerCenter = m_position + m_Anchor;
-        auto leftVec = mat2vec(rotateAround({0.f, 0.f}, M_PI / 2)
+        auto leftVec = mat2vec(rotateAround({0.f, 0.f}, static_cast<float>(M_PI) / 2)
                                * vec2mat(accVec));
         const auto mainEngine = playerCenter + accVec * (m_height / 2.f); 
         const auto leftEngine = playerCenter - accVec * (m_height / 4.f)
@@ -192,6 +192,7 @@ private:
 
     std::random_device m_rd;
     std::default_random_engine m_dre{ m_rd() };
-    std::uniform_real_distribution<float> m_angDistr{ -M_PI / 6 , M_PI / 6 };
+    std::uniform_real_distribution<float> m_angDistr{ -static_cast<float>(M_PI) / 6,
+                                                    static_cast<float>(M_PI) / 6 };
     std::uniform_int_distribution<short> m_lifeDistr{ -100, 100 };
 };

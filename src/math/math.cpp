@@ -5,19 +5,6 @@ T clip(const T& n, const T& lower, const T& upper) {
     return std::max(lower, std::min(n, upper));
 }
 
-template<>
-template<>
-Vec3<int>::Vec3(const Vec3<float>& v) : x(static_cast<int>(v.x + .5)),
-    y(static_cast<int>(v.y + .5)),
-    z(static_cast<int>(v.z + .5)) {
-}
-
-template<>
-template<>
-Vec3<float>::Vec3(const Vec3<int>& v) : x(static_cast<float>(v.x)), y(static_cast<float>(v.y)), z(
-        static_cast<float>(v.z)) {
-}
-
 Matrix::Matrix(std::size_t row, std::size_t col) : mCols(col), mRows(row),
     mMatrix(std::vector<std::vector<float>>(row,
                                             std::vector<float>(col,

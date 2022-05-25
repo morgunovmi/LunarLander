@@ -58,8 +58,9 @@ void Renderer::triangle(std::array<Vec2i, 3>& v, Color color) {
     for (int i = 0; i < totalHeight; i++) {
         auto secondHalf = i > v[1].y - v[0].y || v[1].y == v[0].y;
         const auto segHeight = secondHalf ? v[2].y - v[1].y : v[1].y - v[0].y;
-        const auto alpha = static_cast<float>(i) / totalHeight;
-        const auto beta = static_cast<float>(i - (secondHalf ? v[1].y - v[0].y : 0)) / segHeight;
+        const auto alpha = static_cast<float>(i) / static_cast<float>(totalHeight);
+        const auto beta = static_cast<float>(i - (secondHalf ? v[1].y - v[0].y : 0))
+                                                / static_cast<float>(segHeight);
         auto a = v[0] + (v[2] - v[0]) * alpha;
         auto b = secondHalf ? v[1] + (v[2] - v[1]) * beta : v[0] + (v[1] - v[0]) * beta;
         if (a.x > b.x) std::swap(a, b);
@@ -111,8 +112,6 @@ void Renderer::drawVerts(const std::vector<Vec2i> &verts, const std::vector<u8> 
 }
 
 void Renderer::draw() {
-    fill(Black);
-
     for (const auto & obj : m_world) {
         obj->draw();
     }
@@ -122,4 +121,25 @@ void Renderer::draw() {
     std::array<Vec2i, 3> verts{Vec2i{200, 200}, Vec2i{300, 200}, Vec2i{100, 100}};
 
     triangle(verts, Color{{0, 255, 0, 100}});
+}
+
+void Renderer::drawText(Vec2i pos, std::string_view text, std::shared_ptr<Font> font, Color color) {
+    const auto& atlas = font->getAtlas();
+
+    u16 xOffset = 0;
+    for (auto c : text) {
+        const auto glyph = font->getGlyph(c);
+
+        for (size_t y = 0; y < glyph.height; ++y) {
+            for (size_t x = 0; x < glyph.width; ++x) {
+                auto atlasPixelColor = atlas.getImage()[glyph.startPos.y + y][glyph.startPos.x + x];
+
+                if (atlasPixelColor.g > 50) {
+                    buffer[pos.y + y][pos.x + xOffset + x] = color.c32;
+                }
+            }
+        }
+
+        xOffset += glyph.width;
+    }
 }

@@ -35,3 +35,5 @@ target_include_directories(
 )
 
 target_link_libraries(${APP_NAME} m X11)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

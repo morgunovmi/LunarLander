@@ -12,6 +12,7 @@
 #include "entities/Player.h"
 #include "entities/Ground.h"
 #include "entities/Planet.h"
+#include "text/Font.h"
 
 //
 //  You are free to modify this file
@@ -49,11 +50,14 @@ std::shared_ptr<Renderer> renderer{nullptr};
 std::unordered_set<std::shared_ptr<Object>> world{};
 std::shared_ptr<Player> player{nullptr};
 std::shared_ptr<Ground> ground{nullptr};
+std::shared_ptr<Font> font{nullptr};
 
 // initialize game data in this function
 void initialize()
 {
     std::cout << "Starting game with resolution: (" << SCREEN_WIDTH << " x " << SCREEN_HEIGHT << ")\n";
+
+    font = std::make_shared<Font>("./resources/fonts/roboto.ppm");
     
     world.insert(
             std::make_shared<Planet>(
@@ -104,8 +108,7 @@ void initialize()
 void act(float dt)
 {
     handleInput();
-    std::cout << "Num obects in the scene: " << world.size() << '\n';
-
+    //std::cout << "Num obects in the scene: " << world.size() << '\n';
     for (auto it = world.begin(); it != world.end();) {
         (*it)->update(dt);
 
@@ -123,7 +126,11 @@ void act(float dt)
 void draw()
 {
     // clear backbuffer
+    Renderer::fill(Black);
+
     renderer->draw();
+
+    Renderer::drawText({300, 300}, "abcdefghijklmnopqrstuvwxyz", font, Red);
 }
 
 // free game data in this function
