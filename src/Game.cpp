@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <execution>
 #include <unordered_set>
 
 #include "engine/Engine.h"
@@ -13,6 +14,7 @@
 #include "entities/Ground.h"
 #include "entities/Planet.h"
 #include "text/Font.h"
+#include "timer/Timer.h"
 
 //
 //  You are free to modify this file
@@ -51,6 +53,7 @@ std::unordered_set<std::shared_ptr<Object>> world{};
 std::shared_ptr<Player> player{nullptr};
 std::shared_ptr<Ground> ground{nullptr};
 std::shared_ptr<Font> font{nullptr};
+
 
 // initialize game data in this function
 void initialize()
@@ -103,11 +106,14 @@ void initialize()
     renderer = std::make_shared<Renderer>(world);
 }
 
+std::vector<double> actTimes{};
 // this function is called to update game data,
 // dt - time elapsed since the previous update (in seconds)
 void act(float dt)
 {
+    Timer t{};
     handleInput();
+    // Think about pthread usage
     //std::cout << "Num obects in the scene: " << world.size() << '\n';
     for (auto it = world.begin(); it != world.end();) {
         (*it)->update(dt);
@@ -118,22 +124,31 @@ void act(float dt)
             ++it;
         }
     }
+    actTimes.push_back(t.stop());
 }
 
 // fill buffer in this function
 // uint32_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH] - is an array of 32-bit colors (8 bits per R, G, B)
+std::vector<double> drawTimes{};
 
 void draw()
 {
+    Timer t{};
     // clear backbuffer
     Renderer::fill(Black);
 
     renderer->draw();
 
     Renderer::drawText({300, 300}, "abcdefghijklmnopqrstuvwxyz", font, Red);
+    drawTimes.push_back(t.stop());
 }
 
 // free game data in this function
 void finalize()
 {
+    auto act = std::accumulate(actTimes.begin(), actTimes.end(), 0.0) / actTimes.size();
+    auto draw = std::accumulate(drawTimes.begin(), drawTimes.end(), 0.0) / drawTimes.size();
+    std::cout << "Avg act time: " << act << '\n';
+    std::cout << "Avg draw time: " << draw << '\n';
+    std::cout << "Avg total frame time: " << act + draw << '\n';
 }
