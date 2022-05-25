@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <array>
-#include <vector>
+#include <unordered_set>
 #include <memory>
 
 #include "RendererConstants.h"
@@ -11,7 +11,7 @@
 
 class Renderer {
 public:
-    Renderer(std::vector<std::shared_ptr<Object>>& world)
+    Renderer(std::unordered_set<std::shared_ptr<Object>>& world)
         :m_world(world) {} 
 
     static void fill(Color c);
@@ -25,5 +25,5 @@ public:
     void draw();
 
 private:
-    std::vector<std::shared_ptr<Object>>& m_world;
+    std::unordered_set<std::shared_ptr<Object>>& m_world;
 };

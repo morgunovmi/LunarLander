@@ -3,7 +3,8 @@
 #include <memory>
 
 #include <stdio.h>
-#include <array>
+#include <algorithm>
+#include <unordered_set>
 
 #include "engine/Engine.h"
 #include "math/math.h"
@@ -29,7 +30,6 @@ void handleInput() {
     }
 }
 
-
 std::vector<Vec2i> groundVerts {
     Vec2i{500, 0 },
     Vec2i{400, 100},
@@ -46,7 +46,7 @@ std::vector<u8> groundIndices {
 };
 
 std::shared_ptr<Renderer> renderer{nullptr};
-std::vector<std::shared_ptr<Object>> world{};
+std::unordered_set<std::shared_ptr<Object>> world{};
 std::shared_ptr<Player> player{nullptr};
 std::shared_ptr<Ground> ground{nullptr};
 
@@ -55,7 +55,7 @@ void initialize()
 {
     std::cout << "Starting game with resolution: (" << SCREEN_WIDTH << " x " << SCREEN_HEIGHT << ")\n";
     
-    world.push_back(
+    world.insert(
             std::make_shared<Planet>(
                 Vec2f{SCREEN_WIDTH - 150, 150},
                 100.f,
@@ -64,7 +64,7 @@ void initialize()
             )
         );
 
-    world.push_back(
+    world.insert(
             std::make_shared<Circle>(
                 Vec2f{150, 150},
                 100.f,
@@ -74,26 +74,27 @@ void initialize()
             )
         );
 
-    world.push_back(
-            std::make_shared<Ground>(
-                groundVerts,
-                groundIndices,
-                White
-            )
+    ground = std::make_shared<Ground>(
+            groundVerts,
+            groundIndices,
+            White
         );
 
-    world.push_back(
-            std::make_shared<Player>(
-                Vec2f{500, 500}, // Pos
-                Vec2f{0, 0}, // Vel 
-                40,         // width 
-                80,         // height
-                0,          // Rot
-                0,          // AngVel
-                White,
-                TRIANGLES 
-            )
+    player = std::make_shared<Player>(
+            Vec2f{500, 100}, // Pos
+            Vec2f{0, 0}, // Vel 
+            40,         // width 
+            80,         // height
+            0,          // Rot
+            0,          // AngVel
+            White,
+            TRIANGLES,
+            ground,
+            world
         );
+
+    world.insert(ground);
+    world.insert(player);
 
     renderer = std::make_shared<Renderer>(world);
 }
@@ -103,8 +104,16 @@ void initialize()
 void act(float dt)
 {
     handleInput();
-    for (auto & obj : world) {
-        obj->update(dt);
+    std::cout << "Num obects in the scene: " << world.size() << '\n';
+
+    for (auto it = world.begin(); it != world.end();) {
+        (*it)->update(dt);
+
+        if (!(*it)->m_isAlive) {
+            it = world.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 

@@ -1,11 +1,12 @@
-#ifndef MYRENDERER_GEOMETRY_H
-#define MYRENDERER_GEOMETRY_H
+#pragma once 
 
 #include <cmath>
 #include <iostream>
 #include <cassert>
 #include <cmath>
 #include <vector>
+
+#include "qsqrt.h"
 
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -47,6 +48,11 @@ struct Vec2 {
     }
 
     [[nodiscard]] float norm() const { return std::sqrt(x * x + y * y); }
+
+    [[nodiscard]] Vec2<T>& normalize(T l = 1) {
+        *this = (*this) * l * Q_rsqrt(x * x + y * y);
+        return *this;
+    }
 };
 
 template<typename T>
@@ -194,5 +200,3 @@ inline Matrix rotateAround(const Vec2f& p, float angle) {
 
     return translation1 * rot * translation0; 
 }
-
-#endif 

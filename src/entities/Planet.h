@@ -7,7 +7,7 @@ public:
         : Circle(pos, radius, color, numPoints, true) {}
 
     virtual void update(float dt) override {
-        m_position.x -= 0.8f * dt;
+        m_position.x -= 1.5f * dt;
 
         if (m_position.x < -m_radius - 10.f) {
             m_position.x = m_radius + 10.f;

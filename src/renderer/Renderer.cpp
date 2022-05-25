@@ -111,7 +111,6 @@ void Renderer::drawVerts(const std::vector<Vec2i> &verts, const std::vector<u8> 
 }
 
 void Renderer::draw() {
-    //memset(buffer, 0, SCREEN_HEIGHT * SCREEN_WIDTH * sizeof(uint32_t));
     fill(Black);
 
     for (const auto & obj : m_world) {

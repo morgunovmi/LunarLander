@@ -16,6 +16,8 @@ public:
         m_Anchor = newAnchor;
     }
 
+    const std::vector<Vec2f>& getVerts() const { return m_verts; } 
+
     virtual void draw() override {
         std::vector<Vec2i> transformed{};
         for (const auto & vert : m_verts) {
@@ -37,11 +39,11 @@ private:
     std::vector<Vec2f> m_verts {
         {0, 0},
         {0, static_cast<float>(m_height)},
+        {static_cast<float>(m_width), static_cast<float>(m_height)},
         {static_cast<float>(m_width), 0},
-        {static_cast<float>(m_width), static_cast<float>(m_height)}
     };
 
     const std::vector<u8> m_indices {
-        0, 1, 2, 1, 2, 3
+        0, 1, 2, 2, 3, 0
     };
 };

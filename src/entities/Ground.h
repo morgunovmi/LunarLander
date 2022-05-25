@@ -12,6 +12,8 @@ public:
         Renderer::drawVerts(m_verts, m_indices, m_color, m_mode);
     }
 
+    const std::vector<Vec2i>& getVerts() const { return m_verts; }
+
 private:
     std::vector<Vec2i>& m_verts;
     std::vector<u8>& m_indices;
