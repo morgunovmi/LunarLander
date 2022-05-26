@@ -8,6 +8,17 @@
 #include "Circle.h"
 #include "ExhaustParticle.h"
 
+struct LineCollInfo {
+    Vec2f collPoint;
+    Vec2f surfNormal;
+};
+
+struct QuadCollInfo {
+    Vec2f collPoint;
+    Vec2f surfNormal;
+    u8 faceNum;
+};
+
 class Player : public Quad {
 public:
     Player(Vec2f pos, Vec2f vel,
@@ -19,30 +30,6 @@ public:
         : Quad(pos, width, height, rot, color, mode),
         m_vel(vel), m_angVel(angVel), m_ground(ground),
         m_world(world) {}
-
-    void checkGroundCollisions(std::shared_ptr<Ground> ground) {
-        const auto& groundVerts = ground->getVerts();
-        for (size_t i = 0; i < groundVerts.size() - 1; ++i) {
-            std::vector<Vec2f> transformedQuadVerts{};
-            for (const auto & vert : getVerts()) {
-                auto newVert = mat2vec(rotateAround(m_Anchor+ m_position, m_rotation) * translation(m_position) * vec2mat(vert));
-                transformedQuadVerts.push_back(newVert);
-            }
-
-            Vec2f groundSegmentP1{static_cast<float>(groundVerts[i].y), static_cast<float>(groundVerts[i].x)};
-            Vec2f groundSegmentP2{static_cast<float>(groundVerts[i + 1].y), static_cast<float>(groundVerts[i + 1].x)};
-            for (size_t j = 0; j < 3; ++j) {
-                if (lineLineCollision(transformedQuadVerts[j], transformedQuadVerts[j + 1], groundSegmentP1, groundSegmentP2)) {
-                    m_hasCollided = true;
-                    return;
-                }
-            }
-            if (lineLineCollision(transformedQuadVerts[0], transformedQuadVerts[3], groundSegmentP1, groundSegmentP2)) {
-                    m_hasCollided = true;
-                    return;
-            }
-        }
-    }
 
     virtual void update(float dt) override {
         float acc = 0.f;
@@ -63,10 +50,10 @@ public:
                     std::make_shared<ExhaustParticle>(
                         mainEngine,
                         1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(accVec)) * 400.f,
+                                      * vec2mat(accVec)) * mainExhaustSpeed,
                         3,
                         Red,
-                        200 + m_lifeDistr(m_dre) 
+                        mainExhaustLife + m_lifeDistr(m_dre) 
                     )
                 );
         }
@@ -76,7 +63,12 @@ public:
         m_vel = m_vel + accVec * acc;
         m_vel = m_vel + grav;
         m_position = m_position + m_vel * dt;
-        checkGroundCollisions(m_ground);
+
+        QuadCollInfo collisionInfo{};
+        if (checkGroundCollisions(m_ground, collisionInfo)) {
+            //std::cout << "COllision point : " << collisionInfo.collPoint.x << " , " << collisionInfo.collPoint.y << '\n';
+            resolveCollision(collisionInfo);
+        }
 
         float angAcc = 0;
 
@@ -87,10 +79,10 @@ public:
                     std::make_shared<ExhaustParticle>(
                         leftEngine - leftVec * m_width,
                         -1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(leftVec)) * 200.f,
+                                      * vec2mat(leftVec)) * maneuverExhaustSpeed,
                         3,
                         Green,
-                        200 + m_lifeDistr(m_dre) 
+                        maneuverExhaustLife + m_lifeDistr(m_dre) 
                     )
                 );
         }
@@ -101,10 +93,10 @@ public:
                     std::make_shared<ExhaustParticle>(
                         leftEngine,
                         1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(leftVec)) * 200.f,
+                                      * vec2mat(leftVec)) * maneuverExhaustSpeed,
                         3,
                         Green,
-                        200 + m_lifeDistr(m_dre) 
+                        maneuverExhaustLife + m_lifeDistr(m_dre) 
                     )
                 );
         }
@@ -147,7 +139,7 @@ public:
     */
 
 private:
-    bool lineLineCollision(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2) {
+    bool lineLineCollision(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2, LineCollInfo& collisionInfo) {
         auto x1 = a1.x;
         auto x2 = a2.x;
         auto x3 = b1.x;
@@ -164,14 +156,80 @@ private:
         // if uA and uB are between 0-1, lines are colliding
         if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
 
-            // optionally, draw a circle where the lines meet
-            float intersectionX = x1 + (uA * (x2-x1));
-            float intersectionY = y1 + (uA * (y2-y1));
+            collisionInfo.collPoint.x = x1 + (uA * (x2-x1));
+            collisionInfo.collPoint.y = y1 + (uA * (y2-y1)); 
+            collisionInfo.surfNormal = Vec2f{-(y4 - y3), (x4 - x3)}.normalize();
 
             return true;
         }
         return false;
     }
+
+    bool checkGroundCollisions(std::shared_ptr<Ground> ground, QuadCollInfo& collisionInfo) {
+        const auto& groundVerts = ground->getVerts();
+        for (size_t i = 0; i < groundVerts.size() - 1; ++i) {
+            std::vector<Vec2f> transformedQuadVerts{};
+            for (const auto & vert : getVerts()) {
+                auto newVert = mat2vec(rotateAround(m_Anchor+ m_position, m_rotation) * translation(m_position) * vec2mat(vert));
+                transformedQuadVerts.push_back(newVert);
+            }
+
+            Vec2f groundSegmentP1{static_cast<float>(groundVerts[i].y), static_cast<float>(groundVerts[i].x)};
+            Vec2f groundSegmentP2{static_cast<float>(groundVerts[i + 1].y), static_cast<float>(groundVerts[i + 1].x)};
+            LineCollInfo info{};
+            for (size_t j = 0; j < 3; ++j) {
+                if (lineLineCollision(transformedQuadVerts[j], transformedQuadVerts[j + 1],
+                                      groundSegmentP1, groundSegmentP2, info)) {
+                    collisionInfo.collPoint = info.collPoint;
+                    collisionInfo.surfNormal = info.surfNormal;
+                    collisionInfo.faceNum = j;
+                    return true;
+                }
+            }
+            if (lineLineCollision(transformedQuadVerts[0], transformedQuadVerts[3],
+                                  groundSegmentP1, groundSegmentP2, info)) {
+                    collisionInfo.collPoint = info.collPoint;
+                    collisionInfo.surfNormal = info.surfNormal;
+                    collisionInfo.faceNum = 3;
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    void resolveCollision(QuadCollInfo collInfo) {
+        m_vel = (m_vel - 2 * (collInfo.surfNormal * m_vel) * collInfo.surfNormal) * hitDamping; 
+
+        auto centerCollVec = collInfo.collPoint - (m_position + m_Anchor);
+        std::vector<Vec2f> transformedQuadVerts{};
+        for (const auto & vert : getVerts()) {
+            auto newVert = mat2vec(rotateAround(m_Anchor+ m_position, m_rotation) * translation(m_position) * vec2mat(vert));
+            transformedQuadVerts.push_back(newVert);
+        }
+
+        auto faceVec = collInfo.faceNum == 3 ? (transformedQuadVerts[3] - transformedQuadVerts[0]) :
+                                            (transformedQuadVerts[collInfo.faceNum + 1] - transformedQuadVerts[collInfo.faceNum]);
+
+        float lever = faceVec * centerCollVec;
+
+        std::cout << m_vel.norm() << '\n';
+        if (m_vel.norm() > 10.f) {
+            m_angVel += lever * 0.0002f;
+
+            if (m_vel.x > horizontalSpeedEps) {
+                m_angVel += lever * 0.0001f;
+            } else if (m_vel.x < -horizontalSpeedEps) {
+                m_angVel -= lever * 0.0001f;
+            }
+        } else {
+            if (m_angVel < 0.1f) {
+                m_angVel = 0.f;
+            }
+            m_angVel -= m_angVel > 0 ? 0.1f : -0.1f;
+        }
+    }
+
 
 private:
     Vec2f m_vel;
@@ -186,7 +244,14 @@ private:
     const float mainEnginePower = 2.f;
     const float maneuverEnginePower = 0.01f;
 
-    bool m_hasCollided;
+    const float mainExhaustSpeed = 800.f;
+    const float maneuverExhaustSpeed = 800.f;
+
+    const u16 mainExhaustLife = 80;
+    const u16 maneuverExhaustLife = 50;
+
+    const float hitDamping = 0.8f;
+    const float horizontalSpeedEps = 1.f; 
 
     Vec2f grav{0.0, 0.7f};
 
@@ -194,5 +259,5 @@ private:
     std::default_random_engine m_dre{ m_rd() };
     std::uniform_real_distribution<float> m_angDistr{ -static_cast<float>(M_PI) / 6,
                                                     static_cast<float>(M_PI) / 6 };
-    std::uniform_int_distribution<short> m_lifeDistr{ -100, 100 };
+    std::uniform_int_distribution<short> m_lifeDistr{ -50, 50 };
 };

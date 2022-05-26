@@ -43,6 +43,8 @@ struct Vec2 {
 
     Vec2<T> operator*(float f) const { return Vec2<T>{static_cast<T>(x * f), static_cast<T>(y * f)}; }
 
+    T operator*(const Vec2<T>& v) const { return x * v.x + y * v.y; }
+
     friend std::ostream& operator<<(std::ostream& s, Vec2<T>& v) {
         s << "(" << v.x << ", " << v.y << ")\n";
         return s;

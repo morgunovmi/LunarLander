@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "renderer/RendererConstants.h"
+#include "timer/Timer.h"
 
 class Image {
 public:
@@ -19,9 +20,10 @@ public:
 
 private:
     void loadFromPpm(std::string_view ppmPath) {
+        Timer t{};
         std::cout << "Loading image from ppm file " << ppmPath << '\n';
-        std::string temp{};
         if (auto ifs = std::ifstream{ ppmPath.data() }) {
+            std::string temp{};
             std::getline(ifs, temp);
             std::cout << temp << '\n';
             std::getline(ifs, temp);
@@ -53,6 +55,7 @@ private:
             }
             std::cout << "Loaded image successfully" << ppmPath << '\n';
             std::cout << "Size is " << m_width << " x " << m_height << '\n';
+            std::cout << "Image loading took " << t.stop() << '\n';
             return;
         }
         std::cerr << "Couldn't load file " << ppmPath << '\n';
