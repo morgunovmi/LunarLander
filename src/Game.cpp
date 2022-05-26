@@ -133,7 +133,7 @@ void draw()
 
     renderer->draw();
 
-    Renderer::drawText({300, 300}, "abcdefghijklmnopqrstuvwxyz", font, Red);
+    Renderer::drawText({300, 300}, "Hello, World! My name is Jeffrey Jefferson Thompson", font, Red);
     drawTimes.push_back(t.stop());
 }
 

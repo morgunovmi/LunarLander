@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include <random>
+#include <cmath>
 
 #include "Quad.h" 
 #include "Ground.h"
@@ -214,13 +215,14 @@ private:
         float lever = faceVec * centerCollVec;
 
         std::cout << m_vel.norm() << '\n';
-        if (m_vel.norm() > 10.f) {
-            m_angVel += lever * 0.0002f;
+        float angAcc = 0;
+        if (m_vel.norm() > 3.f) {
+            angAcc += lever * m_vel.norm() * 0.000002f;
 
             if (m_vel.x > horizontalSpeedEps) {
-                m_angVel += lever * 0.0001f;
+                angAcc += lever * std::abs(m_vel.x) * 0.00001f;
             } else if (m_vel.x < -horizontalSpeedEps) {
-                m_angVel -= lever * 0.0001f;
+                angAcc -= lever * std::abs(m_vel.x) * 0.00001f;
             }
         } else {
             if (m_angVel < 0.1f) {
@@ -228,6 +230,8 @@ private:
             }
             m_angVel -= m_angVel > 0 ? 0.1f : -0.1f;
         }
+        std::clamp(angAcc, -maxAngAcc, maxAngAcc);
+        m_angVel += angAcc;
     }
 
 

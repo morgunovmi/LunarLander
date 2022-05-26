@@ -3,7 +3,6 @@
 #include <cctype>
 
 #include "Image.h"
-
 struct Glyph {
     Vec2i startPos;
     u16 width;
@@ -19,10 +18,6 @@ public:
 
     // This is retarded
     Glyph getGlyph(char c) {
-        if (!isalnum(c)) {
-            throw std::runtime_error{"Tried to print something not alphanumeric. Oh well....\n"};
-        }
-
         switch (c) {
             case 'a':
                 return Glyph{{0,0}, 10, 16};
@@ -77,79 +72,89 @@ public:
             case 'z':
                 return Glyph{{225,0}, 10, 16};
             case 'A':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{0,23}, 12, 15};
             case 'B':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{12,23}, 11, 15};
             case 'C':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{23,23}, 12, 15};
             case 'D':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{35,23}, 12, 15};
             case 'E':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{46,23}, 11, 15};
             case 'F':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{56,23}, 11, 15};
             case 'G':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{67,23}, 12, 15};
             case 'H':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{79,23}, 12, 15};
             case 'I':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{92,23}, 4, 15};
             case 'J':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{96,23}, 10, 15};
             case 'K':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{107,23}, 11, 15};
             case 'L':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{118,23}, 10, 15};
             case 'M':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{128,23}, 15, 15};
             case 'N':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{143,23}, 13, 15};
             case 'O':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{156,23}, 13, 15};
             case 'P':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{169,23}, 11, 15};
             case 'Q':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{180,23}, 13, 17};
             case 'R':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{192,23}, 12, 15};
             case 'S':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{203,23}, 11, 15};
             case 'T':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{214,23}, 11, 15};
             case 'U':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{225,23}, 11, 15};
             case 'V':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{236,23}, 12, 15};
             case 'W':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{248,23}, 16, 15};
             case 'X':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{264,23}, 11, 15};
             case 'Y':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{275,23}, 11, 15};
             case 'Z':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{286,23}, 10, 15};
             case '0':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{0,45}, 10, 15};
             case '1':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{10,45}, 10, 15};
             case '2':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{20,45}, 11, 15};
             case '3':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{30,45}, 10, 15};
             case '4':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{40,45}, 11, 15};
             case '5':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{51,45}, 10, 15};
             case '6':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{61,45}, 10, 15};
             case '7':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{70,45}, 11, 15};
             case '8':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{81,45}, 10, 15};
             case '9':
-                return Glyph{{0,0}, 10, 10};
+                return Glyph{{91,45}, 10, 15};
+            case ' ':
+                return Glyph{{256,45}, 10, 15};
+            case ':':
+                return Glyph{{109,45}, 6, 15};
+            case '.':
+                return Glyph{{101,45}, 5, 15};
+            case ',':
+                return Glyph{{109,45}, 5, 18};
+            case '!':
+                return Glyph{{132,45}, 4, 15};
             default:
-                throw std::runtime_error{"Undefined symbol"};
+                throw std::runtime_error{"Trying to print undefined symbol"};
         }
     }
 
