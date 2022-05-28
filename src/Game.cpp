@@ -108,6 +108,7 @@ void initialize()
     ground = std::make_shared<Ground>(
             groundVerts,
             groundIndices,
+            landingPadIndex,
             White,
             "Ground"
         );
