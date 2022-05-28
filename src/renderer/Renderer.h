@@ -1,17 +1,16 @@
 #pragma once
 
 #include <array>
-#include <unordered_set>
-#include <memory>
 
 #include "RendererConstants.h"
 #include "engine/Engine.h"
 #include "entities/Object.h"
 #include "text/Font.h"
+#include "Game.h"
 
 class Renderer {
 public:
-    Renderer(std::unordered_set<std::shared_ptr<Object>>& world)
+    Renderer(GameWorld& world)
         : m_world(world) {} 
 
     static void fill(Color c);
@@ -27,5 +26,5 @@ public:
     void draw();
 
 private:
-    std::unordered_set<std::shared_ptr<Object>>& m_world;
+    GameWorld& m_world;
 };

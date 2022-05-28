@@ -9,8 +9,8 @@ public:
     using clock_t = std::chrono::steady_clock;
     using timepoint_t = clock_t::time_point;
 
-    ExhaustParticle(Vec2f pos, Vec2f vel, float radius, Color color, u16 lifeTime) 
-        : Circle(pos, radius, color, 20, true), m_spawnTime(clock_t::now()), m_lifeTime(lifeTime),
+    ExhaustParticle(Vec2f pos, Vec2f vel, float radius, Color color, u16 lifeTime, std::string_view tag) 
+        : Circle(pos, radius, color, 20, true, tag), m_spawnTime(clock_t::now()), m_lifeTime(lifeTime),
             m_velocity(vel) {} 
 
     virtual void update(float dt) override {

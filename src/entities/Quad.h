@@ -5,8 +5,8 @@
 
 class Quad : public Object {
 public:
-    Quad(Vec2f pos, u16 width, u16 height, float rot, Color color, DrawMode mode)
-        : Object(color, mode), m_position(pos),
+    Quad(Vec2f pos, u16 width, u16 height, float rot, Color color, DrawMode mode, std::string_view tag)
+        : Object(color, mode, tag), m_position(pos),
         m_width(width), m_height(height), m_rotation(rot),
         m_Anchor(Vec2f{static_cast<float>(width / 2),
                      static_cast<float>(height / 2)}) {}

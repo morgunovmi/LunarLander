@@ -1,6 +1,5 @@
 #pragma once
 
-#include <unordered_set>
 #include <random>
 #include <cmath>
 
@@ -8,6 +7,7 @@
 #include "Ground.h"
 #include "Circle.h"
 #include "ExhaustParticle.h"
+#include "Game.h"
 
 struct LineCollInfo {
     Vec2f collPoint;
@@ -27,10 +27,27 @@ public:
            float rot, float angVel,
            Color color, DrawMode mode,
            std::shared_ptr<Ground> ground,
-           std::unordered_set<std::shared_ptr<Object>>& world)
-        : Quad(pos, width, height, rot, color, mode),
-        m_vel(vel), m_angVel(angVel), m_ground(ground),
+           u16 padIndex,
+           GameWorld& world,
+           std::string_view tag)
+        : Quad(pos, width, height, rot, color, mode, tag),
+        m_vel(vel), m_angVel(angVel), m_ground(ground), m_padIndex(padIndex),
         m_world(world) {}
+
+    float getRemainingMonoProp() const { return monoPropAmount; }
+    float getRemainingFuelAndOx() const { return fuelAndOxidizerAmount; }
+
+    float getSpeed() const { return m_vel.norm(); }
+    float getAngVel() const { return m_angVel; }
+
+    void reset(Vec2f pos) {
+        m_position = pos;
+        m_vel = Vec2f{};
+        m_rotation = 0.f;
+        m_angVel = 0.f;
+        monoPropAmount = 30.f;
+        fuelAndOxidizerAmount = 100.f;
+    }
 
     virtual void update(float dt) override {
         float acc = 0.f;
@@ -44,67 +61,97 @@ public:
         const auto leftEngine = playerCenter - accVec * (m_height / 4.f)
             + leftVec * (m_width / 2.f);
 
-        if (is_key_pressed(VK_UP)) {
-            acc -= mainEnginePower;
+        if (fuelAndOxidizerAmount > 0.f) {
+            if (is_key_pressed(VK_UP)) {
+                acc -= mainEnginePower;
 
-            m_world.insert(
-                    std::make_shared<ExhaustParticle>(
-                        mainEngine,
-                        1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(accVec)) * mainExhaustSpeed,
-                        3,
-                        Red,
-                        mainExhaustLife + m_lifeDistr(m_dre) 
-                    )
-                );
+                m_world.objects.insert(
+                        std::make_shared<ExhaustParticle>(
+                            mainEngine,
+                            1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
+                                          * vec2mat(accVec)) * mainExhaustSpeed,
+                            3,
+                            Red,
+                            mainExhaustLife + m_lifeDistr(m_dre),
+                            "Particle"
+                        )
+                    );
+
+                fuelAndOxidizerAmount -= fuelPerSecond * dt;
+            }
+
+            std::clamp(acc, -maxAcc, maxAcc);
+
+            m_vel = m_vel + accVec * acc;
         }
-
-        std::clamp(acc, -maxAcc, maxAcc);
-
-        m_vel = m_vel + accVec * acc;
         m_vel = m_vel + grav;
         m_position = m_position + m_vel * dt;
 
         QuadCollInfo collisionInfo{};
-        if (checkGroundCollisions(m_ground, collisionInfo)) {
+        u16 groundIndex;
+        if (checkGroundCollisions(m_ground, collisionInfo, groundIndex)) {
+            if (groundIndex != m_padIndex) {
+                m_world.state = FAIL;
+                return;
+            } else {
+                const auto speed = m_vel.norm();
+                if (speed > crashSpeed || std::abs(m_angVel) > crashAngVel) {
+                    m_world.state = FAIL;
+                    return;
+                }
+
+                if (speed < successSpeed && std::abs(m_angVel) < successAngVel && std::abs(m_rotation) < successRotation) {
+                    m_world.state = SUCCESS;
+                    return;
+                }
+                ++numBounces;
+            }
             //std::cout << "COllision point : " << collisionInfo.collPoint.x << " , " << collisionInfo.collPoint.y << '\n';
             resolveCollision(collisionInfo);
         }
 
-        float angAcc = 0;
+        if (monoPropAmount > 0.f) {
+            float angAcc = 0;
 
-        if (is_key_pressed(VK_LEFT)) {
-            angAcc -= maneuverEnginePower; 
+            if (is_key_pressed(VK_LEFT)) {
+                angAcc -= maneuverEnginePower; 
 
-            m_world.insert(
-                    std::make_shared<ExhaustParticle>(
-                        leftEngine - leftVec * m_width,
-                        -1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(leftVec)) * maneuverExhaustSpeed,
-                        3,
-                        Green,
-                        maneuverExhaustLife + m_lifeDistr(m_dre) 
-                    )
-                );
+                m_world.objects.insert(
+                        std::make_shared<ExhaustParticle>(
+                            leftEngine - leftVec * m_width,
+                            -1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
+                                           * vec2mat(leftVec)) * maneuverExhaustSpeed,
+                            3,
+                            Green,
+                            maneuverExhaustLife + m_lifeDistr(m_dre), 
+                            "Particle"
+                        )
+                    );
+
+                    monoPropAmount -= monoPropPerSecond * dt;
+            }
+
+            if (is_key_pressed(VK_RIGHT)) {
+                angAcc += maneuverEnginePower;
+                m_world.objects.insert(
+                        std::make_shared<ExhaustParticle>(
+                            leftEngine,
+                            1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
+                                          * vec2mat(leftVec)) * maneuverExhaustSpeed,
+                            3,
+                            Green,
+                            maneuverExhaustLife + m_lifeDistr(m_dre),
+                            "Particle"
+                        )
+                    );
+
+                    monoPropAmount -= monoPropPerSecond * dt;
+            }
+
+            std::clamp(angAcc, -maxAngAcc, maxAngAcc);
+
+            m_angVel += angAcc;
         }
-
-        if (is_key_pressed(VK_RIGHT)) {
-            angAcc += maneuverEnginePower;
-            m_world.insert(
-                    std::make_shared<ExhaustParticle>(
-                        leftEngine,
-                        1.f * mat2vec(rotateAround({0.f, 0.f}, m_angDistr(m_dre))
-                                      * vec2mat(leftVec)) * maneuverExhaustSpeed,
-                        3,
-                        Green,
-                        maneuverExhaustLife + m_lifeDistr(m_dre) 
-                    )
-                );
-        }
-
-        std::clamp(angAcc, -maxAngAcc, maxAngAcc);
-
-        m_angVel += angAcc;
         m_rotation += m_angVel * dt;
     }
 
@@ -138,6 +185,12 @@ public:
 
     }
     */
+    const float crashSpeed = 150.f;
+    const float crashAngVel = 1.f;
+    const float successSpeed = 5.f;
+    const float successAngVel = 0.1f;
+    const float successRotation = 0.1f;
+    u16 numBounces = 0;
 
 private:
     bool lineLineCollision(Vec2f a1, Vec2f a2, Vec2f b1, Vec2f b2, LineCollInfo& collisionInfo) {
@@ -166,7 +219,7 @@ private:
         return false;
     }
 
-    bool checkGroundCollisions(std::shared_ptr<Ground> ground, QuadCollInfo& collisionInfo) {
+    bool checkGroundCollisions(std::shared_ptr<Ground> ground, QuadCollInfo& collisionInfo, u16& groundIndex) {
         const auto& groundVerts = ground->getVerts();
         for (size_t i = 0; i < groundVerts.size() - 1; ++i) {
             std::vector<Vec2f> transformedQuadVerts{};
@@ -184,6 +237,7 @@ private:
                     collisionInfo.collPoint = info.collPoint;
                     collisionInfo.surfNormal = info.surfNormal;
                     collisionInfo.faceNum = j;
+                    groundIndex = i;
                     return true;
                 }
             }
@@ -215,14 +269,13 @@ private:
         float lever = faceVec * centerCollVec;
 
         std::cout << m_vel.norm() << '\n';
-        float angAcc = 0;
         if (m_vel.norm() > 3.f) {
-            angAcc += lever * m_vel.norm() * 0.000002f;
+            m_angVel += lever * m_vel.norm() * 0.000002f;
 
             if (m_vel.x > horizontalSpeedEps) {
-                angAcc += lever * std::abs(m_vel.x) * 0.00001f;
+                m_angVel += lever * std::abs(m_vel.x) * 0.00001f;
             } else if (m_vel.x < -horizontalSpeedEps) {
-                angAcc -= lever * std::abs(m_vel.x) * 0.00001f;
+                m_angVel -= lever * std::abs(m_vel.x) * 0.00001f;
             }
         } else {
             if (m_angVel < 0.1f) {
@@ -230,8 +283,6 @@ private:
             }
             m_angVel -= m_angVel > 0 ? 0.1f : -0.1f;
         }
-        std::clamp(angAcc, -maxAngAcc, maxAngAcc);
-        m_angVel += angAcc;
     }
 
 
@@ -240,7 +291,13 @@ private:
     float m_angVel;
 
     std::shared_ptr<Ground> m_ground;
-    std::unordered_set<std::shared_ptr<Object>>& m_world;
+    u16 m_padIndex;
+    GameWorld& m_world;
+
+    float fuelAndOxidizerAmount = 100.f;
+    float fuelPerSecond = 10.f;
+    float monoPropAmount = 30.f;
+    float monoPropPerSecond = 5.f;
 
     const float maxAcc = 10.f;
     const float maxAngAcc = 0.5f;

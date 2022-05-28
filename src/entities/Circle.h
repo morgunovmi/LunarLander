@@ -5,8 +5,8 @@
 
 class Circle : public Object {
 public:
-    Circle(Vec2f pos, float radius, Color color, u16 numPoints, bool fill)
-        : Object(color, TRIANGLES), m_position(pos), m_radius(radius), m_points(numPoints), m_fill(fill) { assert(numPoints >= 3); }
+    Circle(Vec2f pos, float radius, Color color, u16 numPoints, bool fill, std::string_view tag)
+        : Object(color, TRIANGLES, tag), m_position(pos), m_radius(radius), m_points(numPoints), m_fill(fill) { assert(numPoints >= 3); }
 
     virtual void draw() override {
         float angle = static_cast<float>(2 * M_PI); 

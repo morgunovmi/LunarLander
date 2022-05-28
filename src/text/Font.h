@@ -146,7 +146,7 @@ public:
             case ' ':
                 return Glyph{{256,45}, 10, 15};
             case ':':
-                return Glyph{{109,45}, 6, 15};
+                return Glyph{{105,45}, 6, 15};
             case '.':
                 return Glyph{{101,45}, 5, 15};
             case ',':
@@ -154,6 +154,7 @@ public:
             case '!':
                 return Glyph{{132,45}, 4, 15};
             default:
+                std::cerr << c << '\n';
                 throw std::runtime_error{"Trying to print undefined symbol"};
         }
     }
