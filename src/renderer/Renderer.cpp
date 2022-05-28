@@ -115,12 +115,6 @@ void Renderer::draw() {
     for (const auto & obj : m_world.objects) {
         obj->draw();
     }
-
-    line(Vec2i{100, 100}, Vec2i{200, 200}, Color{{0, 255, 0, 100}});
-
-    std::array<Vec2i, 3> verts{Vec2i{200, 200}, Vec2i{300, 200}, Vec2i{100, 100}};
-
-    triangle(verts, Color{{0, 255, 0, 100}});
 }
 
 void Renderer::drawText(Vec2i pos, std::string_view text, std::shared_ptr<Font> font, Color color) {

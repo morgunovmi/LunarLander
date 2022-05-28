@@ -25,21 +25,34 @@
 
 
 std::vector<Vec2i> groundVerts {
-    Vec2i{500, 0},
-    Vec2i{400, 100},
-    Vec2i{500, 200},
-    Vec2i{400, 300},
-    Vec2i{400, 600},
-    Vec2i{500, 700},
-    Vec2i{400, 800},
-    Vec2i{400, SCREEN_WIDTH},
+    Vec2i{200, 0},
+    Vec2i{200, 200},
+    Vec2i{100, 230},
+    Vec2i{300, 260},
+    Vec2i{250, 310},
+    Vec2i{300, 360},
+    Vec2i{250, 410},
+    Vec2i{400, 510},
+    Vec2i{380, 560},
+    Vec2i{500, 590},
+    Vec2i{470, 620},
+    Vec2i{600, 700},
+    Vec2i{600, 850},
+    Vec2i{450, 900},
+    Vec2i{500, 930},
+    Vec2i{530, 960},
+    Vec2i{500, 990},
+    Vec2i{500, SCREEN_WIDTH},
 };
 
 std::vector<u8> groundIndices {
-    0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7
+    0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
+    5, 6, 6, 7, 7, 8, 8, 9, 9, 10,
+    10, 11, 11, 12, 12, 13, 13, 14,
+    14, 15, 15, 16, 16, 17
 };
 
-u16 landingPadIndex = 3;
+u16 landingPadIndex = 11;
 
 std::shared_ptr<Renderer> renderer{nullptr};
 std::shared_ptr<Player> player{nullptr};
@@ -52,6 +65,8 @@ GameWorld world {
     .state = INTRO,
     .objects = {}
 };
+
+Vec2f startinPos{50.f, 50.f};
 
 void handleInput() {
     if (is_key_pressed(VK_ESCAPE)) {
@@ -66,12 +81,12 @@ void handleInput() {
             case FAIL:
                 world.state = GAME;
                 gameTime = 0.f;
-                player->reset({500.f, 100.f});
+                player->reset(startinPos);
                 break;
             case SUCCESS:
                 world.state = GAME;
                 gameTime = 0.f;
-                player->reset({500.f, 100.f});
+                player->reset(startinPos);
             break;
         }
     }
@@ -94,17 +109,6 @@ void initialize()
             )
         );
 
-    world.objects.insert(
-            std::make_shared<Circle>(
-                Vec2f{150, 150},
-                100.f,
-                Blue,
-                75, 
-                false,
-                "Hollow"
-            )
-        );
-
     ground = std::make_shared<Ground>(
             groundVerts,
             groundIndices,
@@ -114,7 +118,7 @@ void initialize()
         );
 
     player = std::make_shared<Player>(
-            Vec2f{500, 100}, // Pos
+            startinPos, // Pos
             Vec2f{0, 0}, // Vel 
             40,         // width 
             80,         // height

@@ -153,6 +153,11 @@ public:
             m_angVel += angAcc;
         }
         m_rotation += m_angVel * dt;
+
+        if (playerCenter.x < -m_width || playerCenter.x > SCREEN_WIDTH + m_width
+            || playerCenter.y < -m_height || playerCenter.y > SCREEN_HEIGHT + m_height) {
+            m_world.state = FAIL;
+        }
     }
 
     /*
