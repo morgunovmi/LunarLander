@@ -20,8 +20,13 @@ include(cmake/Sanitizers.cmake)
 find_package(X11 REQUIRED)
 
 set(APP_NAME "LunarLander")
-add_executable(${APP_NAME} "")
-add_subdirectory(src)
+add_executable(${APP_NAME}
+    src/Game.cpp
+    src/math/math.cpp
+    src/engine/Engine.cpp
+    src/renderer/Renderer.cpp
+    src/timer/Timer.cpp
+)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
