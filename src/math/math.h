@@ -6,8 +6,6 @@
 #include <cmath>
 #include <vector>
 
-#include "qsqrt.h"
-
 using u8 = uint8_t;
 using u16 = uint16_t;
 using u32 = uint32_t;
@@ -53,7 +51,7 @@ struct Vec2 {
     [[nodiscard]] float norm() const { return std::sqrt(x * x + y * y); }
 
     [[nodiscard]] Vec2<T>& normalize(T l = 1) {
-        *this = (*this) * l * Q_rsqrt(x * x + y * y);
+        *this = (*this) * (l / sqrtf(x * x + y * y));
         return *this;
     }
 };
@@ -107,7 +105,7 @@ struct Vec3 {
     [[nodiscard]] float norm() const { return std::sqrt(x * x + y * y + z * z); }
 
     [[nodiscard]] Vec3<T>& normalize(T l = 1) {
-        *this = (*this) * l * Q_rsqrt(x * x + y * y + z * z);
+        *this = (*this) * (l / sqrtf(x * x + y * y + z * z));
         return *this;
     }
 
