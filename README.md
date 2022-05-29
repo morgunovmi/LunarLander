@@ -20,6 +20,7 @@ sudo apt-get install --only-upgrade libstdc++6
 ```
 
 ## Build
+You need to have a compiler that supports the C++17 standard. For gcc it's version 8 or higher.
 
 These build instructions are for linux and assume you have CMake installed.
 
