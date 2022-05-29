@@ -2,6 +2,7 @@
 
 #include <random>
 #include <cmath>
+#include <algorithm>
 
 #include "Quad.h" 
 #include "Ground.h"
