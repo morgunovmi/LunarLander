@@ -1,6 +1,7 @@
 #include <memory.h>
 #include <numeric>
 #include <iostream>
+#include <algorithm>
 
 #include "Renderer.h"
 
