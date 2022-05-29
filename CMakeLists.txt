@@ -1,4 +1,3 @@
-
 # You are free to modify this file
 
 cmake_minimum_required(VERSION 3.10)
@@ -28,10 +27,10 @@ add_executable(${APP_NAME}
     src/timer/Timer.cpp
 )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-target_compile_features(${APP_NAME} PUBLIC cxx_std_20)
+target_compile_features(${APP_NAME} PUBLIC cxx_std_17)
 target_compile_options(${APP_NAME} PRIVATE ${SANITIZER_FLAGS} ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
 
 target_include_directories(
