@@ -1,6 +1,7 @@
 #include <memory>
 #include <unordered_set>
 #include <random>
+#include <filesystem>
 
 #include "engine/Engine.h"
 #include "math/math.h"
@@ -101,13 +102,19 @@ void handleInput() {
     }
 }
 
+namespace fs = std::filesystem;
 // initialize game data in this function
 void initialize()
 {
     std::cout << "Starting game with resolution: (" << SCREEN_WIDTH << " x " << SCREEN_HEIGHT << ")\n";
 
-    font = std::make_shared<Font>("./resources/fonts/roboto.ppm");
-    
+    const fs::path local{"./resources/fonts/roboto.ppm"};
+    if (!fs::exists(local)) {
+        font = std::make_shared<Font>("/usr/share/LunarLander/resources/fonts/roboto.ppm");
+    } else {
+        font = std::make_shared<Font>("./resources/fonts/roboto.ppm");
+    }
+
     world.objects.insert(
             std::make_shared<Planet>(
                 Vec2f{SCREEN_WIDTH - 150, 150},
