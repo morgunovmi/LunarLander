@@ -11,7 +11,8 @@ Then you install it with
 sudo dpkg -i ./LunarLander_version_num_architecture.deb
 LunarLander
 ```
-If you run into errors with GLIBCXX version, upgrade the libstdc++6 (note that you have to do it before installing the .deb package
+If you run into errors with GLIBCXX version, upgrade the libstdc++6 (note that you have to do it before installing the .deb package)
+
 How to do on Ubuntu
 ```
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
