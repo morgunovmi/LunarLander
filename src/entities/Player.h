@@ -94,16 +94,26 @@ public:
         u16 groundIndex;
         if (checkGroundCollisions(m_ground, collisionInfo, groundIndex)) {
             if (groundIndex != m_padIndex) {
+                std::cout << '\n';
+                std::cout << "Hit the ground" << '\n';
+                std::cout << '\n';
                 m_world.state = FAIL;
                 return;
             } else {
                 const auto speed = m_vel.norm();
                 if (speed > crashSpeed || std::abs(m_angVel) > crashAngVel || std::abs(m_rotation) > crashRotation) {
+                    std::cout << '\n';
+                    std::cout << "Crashed on landing\n";
+                    std::cout << speed << " / " <<  crashSpeed << '\n';
+                    std::cout << m_angVel << " / " <<  crashAngVel << '\n';
+                    std::cout << m_rotation << " / " <<  crashRotation << '\n';
+                    std::cout << '\n';
                     m_world.state = FAIL;
                     return;
                 }
 
                 if (speed < successSpeed && std::abs(m_angVel) < successAngVel && std::abs(m_rotation) < successRotation) {
+                    std::cout << "Success\n";
                     m_world.state = SUCCESS;
                     return;
                 }
@@ -198,10 +208,10 @@ public:
     }
     */
     const float crashSpeed = 150.f;
-    const float crashRotation = 0.2f;
-    const float crashAngVel = 1.f;
+    const float crashRotation = 0.3f;
+    const float crashAngVel = 1.5f;
     const float successSpeed = 5.f;
-    const float successAngVel = 0.1f;
+    const float successAngVel = 0.3f;
     const float successRotation = 0.1f;
     u16 numBounces = 0;
 
@@ -281,7 +291,7 @@ private:
 
         float lever = faceVec * centerCollVec;
 
-        std::cout << m_vel.norm() << '\n';
+        //std::cout << m_vel.norm() << '\n';
         if (m_vel.norm() > 3.f) {
             m_angVel += lever * m_vel.norm() * 0.000002f;
 
@@ -291,9 +301,6 @@ private:
                 m_angVel -= lever * std::abs(m_vel.x) * 0.00001f;
             }
         } else {
-            if (m_angVel < 0.1f) {
-                m_angVel = 0.f;
-            }
             m_angVel -= m_angVel > 0 ? 0.1f : -0.1f;
         }
     }
@@ -324,7 +331,7 @@ private:
     const u16 mainExhaustLife = 80;
     const u16 maneuverExhaustLife = 50;
 
-    const float hitDamping = 0.8f;
+    const float hitDamping = 0.6f;
     const float horizontalSpeedEps = 1.f; 
 
     Vec2f grav{0.0, 0.7f};
