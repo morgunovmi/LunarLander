@@ -39,6 +39,7 @@ public:
 
     float getSpeed() const { return m_vel.norm(); }
     float getAngVel() const { return m_angVel; }
+    float getRotation() const { return m_rotation; }
 
     void reset(Vec2f pos) {
         m_position = pos;
@@ -95,7 +96,7 @@ public:
                 return;
             } else {
                 const auto speed = m_vel.norm();
-                if (speed > crashSpeed || std::abs(m_angVel) > crashAngVel) {
+                if (speed > crashSpeed || std::abs(m_angVel) > crashAngVel || std::abs(m_rotation) > crashRotation) {
                     m_world.state = FAIL;
                     return;
                 }
@@ -191,6 +192,7 @@ public:
     }
     */
     const float crashSpeed = 150.f;
+    const float crashRotation = 0.2f;
     const float crashAngVel = 1.f;
     const float successSpeed = 5.f;
     const float successAngVel = 0.1f;

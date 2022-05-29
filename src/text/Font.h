@@ -153,6 +153,8 @@ public:
                 return Glyph{{109,45}, 5, 18};
             case '!':
                 return Glyph{{132,45}, 4, 15};
+            case '-':
+                return Glyph{{224,45}, 4, 16};
             default:
                 std::cerr << c << '\n';
                 throw std::runtime_error{"Trying to print undefined symbol"};

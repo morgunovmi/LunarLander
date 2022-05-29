@@ -1,5 +1,6 @@
 #include <memory>
 #include <unordered_set>
+#include <random>
 
 #include "engine/Engine.h"
 #include "math/math.h"
@@ -26,8 +27,8 @@
 
 std::vector<Vec2i> groundVerts {
     Vec2i{200, 0},
-    Vec2i{200, 200},
-    Vec2i{100, 230},
+    Vec2i{250, 200},
+    Vec2i{150, 230},
     Vec2i{300, 260},
     Vec2i{250, 310},
     Vec2i{300, 360},
@@ -102,10 +103,102 @@ void initialize()
     world.objects.insert(
             std::make_shared<Planet>(
                 Vec2f{SCREEN_WIDTH - 150, 150},
-                100.f,
+                70.f,
                 Blue,
                 75,
                 "Planet"
+            )
+        );
+
+    std::random_device rd{};
+    std::default_random_engine dre{rd()};
+    std::uniform_real_distribution<float> urd{1.f, 3.f};
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{500, 300},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{600, 200},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{700, 100},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+        
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{900, 400},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{50, 50},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{300, 100},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{900, 100},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
+            )
+        );
+
+    world.objects.insert(
+            std::make_shared<Circle>(
+                Vec2f{700, 300},
+                urd(dre),
+                White,
+                10,
+                true,
+                "Star"
             )
         );
 
@@ -178,51 +271,60 @@ void draw()
 
     switch (world.state) {
         case INTRO:
-            Renderer::drawText({250, 20}, "Welcome to Lunar Lander", font, White);
-            Renderer::drawText({250, 40}, "Your goal is to safely land the rocket on the green landing pad", font, White);
-            Renderer::drawText({250, 60}, "You have limited fuel and the faster you do it the more points you get", font, White);
-            Renderer::drawText({250, 80}, "Touching the ground anywhere except the landing pad means failure", font, White);
-            Renderer::drawText({250, 100}, "You also have to land the right way up", font, White);
+            Renderer::drawText({30, 600}, "Welcome to Lunar Lander", font, White);
+            Renderer::drawText({30, 620}, "Your goal is to safely land the rocket on the green landing pad", font, White);
+            Renderer::drawText({30, 640}, "You have limited fuel and the faster you do it the more points you get", font, White);
+            Renderer::drawText({30, 660}, "Touching the ground anywhere except the landing pad means failure", font, White);
+            Renderer::drawText({30, 680}, "You also have to land the right way up", font, White);
         break;
         case GAME: {
             std::string gameTimeText{"Current game time: " + std::to_string(gameTime)};
-            Renderer::drawText({300, 40}, gameTimeText, font, White);
+            Renderer::drawText({30, 600}, gameTimeText, font, White);
 
             std::string monopropText{"Monoprop left: " + std::to_string(player->getRemainingMonoProp() > 0.f ?
                                                                         player->getRemainingMonoProp() : 0.f)};
-            Renderer::drawText({300, 60}, monopropText, font, White);
+            Renderer::drawText({30, 620}, monopropText, font, White);
 
             std::string fuelText{"Fuel and oxidizer left left: " + std::to_string(player->getRemainingFuelAndOx() > 0.f ?
                                                                                   player->getRemainingFuelAndOx() : 0.f)};
-            Renderer::drawText({300, 80}, fuelText, font, White);
+            Renderer::drawText({30, 640}, fuelText, font, White);
             
             const auto speed = player->getSpeed();
             std::string speedText{"Speed: " + std::to_string(speed)};
             if (speed > player->crashSpeed) {
-                Renderer::drawText({300, 100}, speedText, font, Red);
+                Renderer::drawText({30, 660}, speedText, font, Red);
             } else {
-                Renderer::drawText({300, 100}, speedText, font, Green);
+                Renderer::drawText({30, 660}, speedText, font, Green);
             }
-            const auto angVel = std::abs(player->getAngVel());
-            std::string angVelText{"Angular velocity: " + std::to_string(angVel)};
-            if (angVel > player->crashAngVel) {
-                Renderer::drawText({300, 120}, angVelText, font, Red);
+            const auto angVel = player->getAngVel();
+            const auto angVelDeg = radToDeg(angVel);
+            std::string angVelText{"Angular velocity: " + std::to_string(angVelDeg) + " dps"};
+            if (std::abs(angVel) > player->crashAngVel) {
+                Renderer::drawText({30, 680}, angVelText, font, Red);
             } else {
-                Renderer::drawText({300, 120}, angVelText, font, Green);
+                Renderer::drawText({30, 680}, angVelText, font, Green);
+            }
+            const auto rot = player->getRotation();
+            const auto rotDeg = radToDeg(rot); 
+            std::string rotText{"Rotation: " + std::to_string(rotDeg) + " dps"};
+            if (std::abs(rot) > player->crashRotation) {
+                Renderer::drawText({30, 700}, rotText, font, Red);
+            } else {
+                Renderer::drawText({30, 700}, rotText, font, Green);
             }
 
         }
         break;
         case FAIL:
-            Renderer::drawText({250, 20}, "You have crashed your rocket! Jebediah is gone!", font, Red);
-            Renderer::drawText({250, 40}, "Press space to try again", font, Red);
+            Renderer::drawText({30, 600}, "You have crashed your rocket! Jebediah is gone!", font, Red);
+            Renderer::drawText({30, 620}, "Press space to try again", font, Red);
         break;
         case SUCCESS: {
-            Renderer::drawText({250, 20}, "You have successfully landed the rocket! Congratulations!", font, Green);
+            Renderer::drawText({30, 600}, "You have successfully landed the rocket! Congratulations!", font, Green);
             const u32 score = player->getRemainingFuelAndOx() + player->getRemainingMonoProp() + 100.f / (player->numBounces + 1) + 200.f / gameTime;
             std::string scoreText{"Your score is " + std::to_string(score)};
-            Renderer::drawText({250, 40}, scoreText, font, Green);
-            Renderer::drawText({250, 80}, "Press space to play again", font, Green);
+            Renderer::drawText({30, 620}, scoreText, font, Green);
+            Renderer::drawText({30, 640}, "Press space to play again", font, Green);
         }
             break;
         case FREEROAM:

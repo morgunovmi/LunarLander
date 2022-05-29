@@ -203,3 +203,7 @@ inline Matrix rotateAround(const Vec2f& p, float angle) {
 
     return translation1 * rot * translation0; 
 }
+
+inline float radToDeg(float rad) {
+    return rad / M_PI * 180;
+}
