@@ -177,22 +177,25 @@ public:
         }
     }
 
-    /*
     virtual void draw() override {
         Quad::draw();
 
-        auto playerCenter = m_position + m_Anchor;
+        const auto playerCenter = m_position + m_Anchor;
+        Vec2f accVec{0.0, 1.f};
+        accVec = mat2vec(rotateAround({0.f, 0.f}, m_rotation) * vec2mat(accVec));
+
         Circle circ{
-            playerCenter,
-            5.f,
-            Red,
-            10,
+            playerCenter - accVec * (m_height / 4),
+            m_width / 4.f,
+            Blue,
+            30,
             true,
+            "hatch"
         };
         circ.draw();
 
-        Vec2f accVec{0.0, 1.f};
-        accVec = mat2vec(rotateAround({0.f, 0.f}, m_rotation) * vec2mat(accVec));
+        /*
+
 
         auto p2 = playerCenter + accVec * 500.f;
         Renderer::line(Vec2i{static_cast<int>(playerCenter.y), static_cast<int>(playerCenter.x)},
@@ -204,9 +207,9 @@ public:
         auto p3 = playerCenter + leftVec * 500.f;
         Renderer::line(Vec2i{static_cast<int>(playerCenter.y), static_cast<int>(playerCenter.x)},
                        Vec2i{static_cast<int>(p3.y), static_cast<int>(p3.x)}, Red);
+            */
 
     }
-    */
     const float crashSpeed = 150.f;
     const float crashRotation = 0.3f;
     const float crashAngVel = 1.5f;
