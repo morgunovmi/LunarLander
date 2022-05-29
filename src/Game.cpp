@@ -91,6 +91,14 @@ void handleInput() {
             break;
         }
     }
+
+    if (is_key_pressed(VK_RETURN)) {
+        if (world.state == SUCCESS) {
+            world.state = FREEROAM;
+            gameTime = 0.f;
+            player->reset(startinPos);
+        }
+    }
 }
 
 // initialize game data in this function
@@ -275,7 +283,8 @@ void draw()
             Renderer::drawText({30, 620}, "Your goal is to safely land the rocket on the green landing pad", font, White);
             Renderer::drawText({30, 640}, "You have limited fuel and the faster you do it the more points you get", font, White);
             Renderer::drawText({30, 660}, "Touching the ground anywhere except the landing pad means failure", font, White);
-            Renderer::drawText({30, 680}, "You also have to land the right way up", font, White);
+            Renderer::drawText({30, 680}, "Use arrow keys to control the engines", font, White);
+            Renderer::drawText({30, 700}, "Press space to play!", font, Green);
         break;
         case GAME: {
             std::string gameTimeText{"Current game time: " + std::to_string(gameTime)};
@@ -325,6 +334,7 @@ void draw()
             std::string scoreText{"Your score is " + std::to_string(score)};
             Renderer::drawText({30, 620}, scoreText, font, Green);
             Renderer::drawText({30, 640}, "Press space to play again", font, Green);
+            Renderer::drawText({30, 660}, "Or press enter to go into freeroam mode", font, Green);
         }
             break;
         case FREEROAM:

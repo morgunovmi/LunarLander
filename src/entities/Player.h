@@ -78,7 +78,9 @@ public:
                         )
                     );
 
-                fuelAndOxidizerAmount -= fuelPerSecond * dt;
+                if (m_world.state != FREEROAM) {
+                    fuelAndOxidizerAmount -= fuelPerSecond * dt;
+                }
             }
 
             std::clamp(acc, -maxAcc, maxAcc);
@@ -129,7 +131,9 @@ public:
                         )
                     );
 
+                if (m_world.state != FREEROAM) {
                     monoPropAmount -= monoPropPerSecond * dt;
+                }
             }
 
             if (is_key_pressed(VK_RIGHT)) {
@@ -146,7 +150,9 @@ public:
                         )
                     );
 
+                if (m_world.state != FREEROAM) {
                     monoPropAmount -= monoPropPerSecond * dt;
+                }
             }
 
             std::clamp(angAcc, -maxAngAcc, maxAngAcc);
