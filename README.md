@@ -6,6 +6,11 @@ A little game demo where you have to land a rocket on the surface of the moon av
 ## Playing
 
 To play the game you can download the binary from the Releases page.
+Then you install it with
+```
+sudo dpkg -i ./LunarLander_version_num_architecture.deb
+LunarLander
+```
 
 ## Build
 
