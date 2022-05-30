@@ -113,6 +113,10 @@ void Renderer::drawVerts(const std::vector<Vec2i> &verts, const std::vector<u8> 
 }
 
 void Renderer::draw() {
+    for (const auto & obj : m_background) {
+        obj->draw();
+    }
+
     for (const auto & obj : m_world.objects) {
         obj->draw();
     }

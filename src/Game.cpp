@@ -61,6 +61,7 @@ std::shared_ptr<Player> player{nullptr};
 std::shared_ptr<Ground> ground{nullptr};
 std::shared_ptr<Font> font{nullptr};
 
+std::unordered_set<std::shared_ptr<Object>> background{};
 
 float gameTime = 0.f;
 GameWorld world {
@@ -115,7 +116,7 @@ void initialize()
         font = std::make_shared<Font>("./resources/fonts/roboto.ppm");
     }
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Planet>(
                 Vec2f{SCREEN_WIDTH - 150, 150},
                 70.f,
@@ -129,7 +130,7 @@ void initialize()
     std::default_random_engine dre{rd()};
     std::uniform_real_distribution<float> urd{1.f, 3.f};
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{500, 300},
                 urd(dre),
@@ -140,7 +141,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{600, 200},
                 urd(dre),
@@ -151,7 +152,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{700, 100},
                 urd(dre),
@@ -162,7 +163,7 @@ void initialize()
             )
         );
         
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{900, 400},
                 urd(dre),
@@ -173,7 +174,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{50, 50},
                 urd(dre),
@@ -184,7 +185,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{300, 100},
                 urd(dre),
@@ -195,7 +196,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{900, 100},
                 urd(dre),
@@ -206,7 +207,7 @@ void initialize()
             )
         );
 
-    world.objects.insert(
+    background.insert(
             std::make_shared<Circle>(
                 Vec2f{700, 300},
                 urd(dre),
@@ -243,7 +244,7 @@ void initialize()
     world.objects.insert(ground);
     world.objects.insert(player);
 
-    renderer = std::make_shared<Renderer>(world);
+    renderer = std::make_shared<Renderer>(world, background);
 }
 
 std::vector<double> actTimes{};

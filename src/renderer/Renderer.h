@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <unordered_set>
 
 #include "RendererConstants.h"
 #include "engine/Engine.h"
@@ -10,8 +11,8 @@
 
 class Renderer {
 public:
-    Renderer(GameWorld& world)
-        : m_world(world) {} 
+    Renderer(GameWorld& world, std::unordered_set<std::shared_ptr<Object>>& background)
+        : m_world(world), m_background(background) {} 
 
     static void fill(Color c);
 
@@ -27,4 +28,5 @@ public:
 
 private:
     GameWorld& m_world;
+    std::unordered_set<std::shared_ptr<Object>>& m_background;
 };
