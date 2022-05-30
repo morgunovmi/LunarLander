@@ -8,6 +8,7 @@ public:
 
     virtual void update(float dt) override {
         m_position.x -= 3.f * dt;
+        m_position.y -= 1.f * dt;
 
         if (m_position.x < -m_radius - 10.f) {
             m_position.x = m_radius + 10.f;

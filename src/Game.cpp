@@ -268,8 +268,13 @@ void act(float dt)
             } else {
                 ++it;
             }
-            actTimes.push_back(t.stop());
         }
+
+        for (auto obj : background) {
+            obj->update(dt);
+        }
+
+        actTimes.push_back(t.stop());
     }
 }
 
